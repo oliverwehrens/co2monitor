@@ -1,6 +1,6 @@
 # Co2Monitor
 
-This connects a TFA Drostmann Co2 Mini Monitor to a Raspberry
+This connects a TFA Drostmann Co2 Mini Monitor to a Raspberry. It will publish it's values to a MQTT Service. The server is configured in the co2monitor.py file.
 
 You need to have python2 and the paho mqtt python package installed.
 
