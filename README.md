@@ -17,3 +17,5 @@ systemctl enable co2monitor.service
 systemctl start co2monitor.service
 ```
 
+
+This is a modification of https://github.com/wooga/office_weather
