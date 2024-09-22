@@ -68,6 +68,7 @@ if __name__ == "__main__":
     client = mqtt.Client("co2monitor")
     client.username_pw_set(username=os.getenv("MQTT_USER"), password=os.getenv("MQTT_PW"))
     client.connect(os.getenv("MQTT_HOST"), port=int(os.getenv("MQTT_PORT"), 1883), keepalive=60, bind_address="")
+    print(f'Client is connect: {client.is_connected()}')
 
     stamp = now()
 
@@ -93,5 +94,5 @@ if __name__ == "__main__":
                 if now() - stamp > 30:
                     client.publish("co2monitor/co2", co2)
                     client.publish("co2monitor/temperature", tmp)
-                    print("Published to MQTT")
+                    print(f"Published to MQTT {client.is_connected()}")
                     stamp = now()
