@@ -1,10 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/co2monitor.env python
+import fcntl
+import os
+import socket
+import sys
+import time
+
+import paho.mqtt.client as mqtt
+from dotenv import load_dotenv
+
 
 # based on code by henryk ploetz
 # https://hackaday.io/project/5301-reverse-engineering-a-low-cost-usb-co-monitor/log/17909-all-your-base-are-belong-to-us
-
-import sys, fcntl, socket, time
-import paho.mqtt.client as mqtt
 
 
 def decrypt(key, data):
@@ -43,8 +49,7 @@ def now():
 
 
 if __name__ == "__main__":
-    """main"""
-
+    load_dotenv(dotenv_path=".co2monitor.env")
     # use lock on socket to indicate that script is already running
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -61,7 +66,8 @@ if __name__ == "__main__":
     fcntl.ioctl(fp, HIDIOCSFEATURE_9, set_report)
     values = {}
     client = mqtt.Client("co2monitor")
-    client.connect("192.168.10.5", port=1883, keepalive=60, bind_address="")
+    client.username_pw_set(username=os.getenv("MQTT_USER"), password=os.getenv("MQTT_PW"))
+    client.connect(os.getenv("MQTT_HOST"), port=int(os.getenv("MQTT_PORT"), 1883), keepalive=60, bind_address="")
 
     stamp = now()
 
