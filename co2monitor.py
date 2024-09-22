@@ -50,6 +50,7 @@ def now():
 
 if __name__ == "__main__":
     load_dotenv(dotenv_path=".co2monitor.env")
+    print("Will publish data to " + os.getenv("MQTT_HOST", "None") + " on port " + os.getenv("MQTT_PORT", "None") + ".")
     # use lock on socket to indicate that script is already running
     try:
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -66,9 +67,11 @@ if __name__ == "__main__":
     fcntl.ioctl(fp, HIDIOCSFEATURE_9, set_report)
     values = {}
     client = mqtt.Client("co2monitor")
-    client.username_pw_set(username=os.getenv("MQTT_USER"), password=os.getenv("MQTT_PW"))
-    client.connect(os.getenv("MQTT_HOST"), port=int(os.getenv("MQTT_PORT"), 1883), keepalive=60, bind_address="")
-    print('Client is connect: ' + str(client.is_connected()))
+    port = int(os.getenv("MQTT_PORT", "1883"))
+    username = os.getenv("MQTT_USER")
+    password = os.getenv("MQTT_PW")
+    client.username_pw_set(username=username, password=password)
+    client.connect(os.getenv("MQTT_HOST"), port=port, keepalive=60, bind_address="")
 
     stamp = now()
 
@@ -94,5 +97,5 @@ if __name__ == "__main__":
                 if now() - stamp > 30:
                     client.publish("co2monitor/co2", co2)
                     client.publish("co2monitor/temperature", tmp)
-                    print("Published to MQTT "+str(client.is_connected()))
+                    print("Published to MQTT.")
                     stamp = now()
